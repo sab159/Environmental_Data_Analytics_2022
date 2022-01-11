@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: "Sophia Bryson (sab159)"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -16,27 +16,27 @@ This exercise accompanies the introductory material in Environmental Data Analyt
 6. When you have completed the assignment, **Knit** the text and code into a single PDF file.
 8. After Knitting, submit the completed exercise (PDF file) to the dropbox in Sakai. Add your last name into the file name (e.g., "Lima_A01_Introduction.Rmd") prior to submission.
 
-The completed exercise is due on <>.
+The completed exercise is due on 18 January 2022.
 
 ## 1) Discussion Questions
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: I feel fairly comfortable with basic data analytics - I started doing data analytics in Excel during high school while on a robotics team. I feel fairly comfortable with R, as I've used it a fair amount in my work for the Internet of Water and in my MP, though much of my knowledge is self-taught and I'm looking forward to learning in a more structured way. While I have used Git in John's Advanced GIS, I still feel like a novice in it - I'm generally able to sort things out with enough time, but I don't feel very confident with it. 
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: I feel confident in my ability to learn by doing, and to incrementally gain skills and knowledge through applied problem solving.
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: At the moment, I'm just feeling apprehensive about the structure of the course and am worried that something will fall through the cracks between lectures, assignments, and synchronous sections. I think it'll just take me a couple weeks to get familiar with the format and settled into a routine. 
 
 
 ## 2) GitHub
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository  and that you have updated your course README file. 
 
-> Answer: 
+> Answer: https://github.com/sab159/Environmental_Data_Analytics_2022/tree/main
 
 
