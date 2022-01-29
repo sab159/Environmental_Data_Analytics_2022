@@ -118,6 +118,10 @@ Durham_10day_Forecast <- data.frame(highTemps_F, lowTemps_F, highTemps_C, lowTem
 colnames(Durham_10day_Forecast) <- c("High (°F)", "Low (°F)", "High (°C)", "Low (°C)")
 Durham_10day_Forecast
 
+# Durham_10day_Forecast <- data.frame("High (°F)" = highTemps_F, "Low (°F)" = lowTemps_F, 
+#                                     "High (°C)" = highTemps_C, "Low (°C)" = lowTemps_C)
+# Durham_10day_Forecast
+
 ```
 
 Use the common functions `summary` and `sd` to obtain basic data summaries of the ten-day forecast. How would you call these functions differently for the entire data frame vs. a single column? Attempt to demonstrate both options below.
@@ -153,9 +157,9 @@ Remember formatting of dates in R:
 # (code must be uncommented)
 today <- Sys.Date()
 format(today, format = "%B")
-#format(today, format = "")
-#format(today, format = "")
-#format(today, format = "")
+format(today, format = "%A, %d %B %Y") #verbose
+format(today, format = "%m/%d/%y") #succinct
+format(today, format = "%m-%d-%Y") #classic
 
 ```
 
