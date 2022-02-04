@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling"
-author: "Student Name"
+author: "Sophia Bryson"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -25,8 +25,42 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 ```{r, message = FALSE}
 #1
+  # check working directory
+  # setwd("Z:/ENV872/Environmental_Data_Analytics_2022")
+  getwd() #kept reverting to 'assignments' folder despite opening through .Rproj, and setting manually reverts after the chunk is run. I'd love feedback on how to fix this. 
+
+  
+  # load packages
+  library(tidyverse)
+  library(lubridate)
+  
+  # load in data - EPA air datasets on ozone & particulate matter
+  O3_2018 <- read.csv("../Data/Raw/EPAair_O3_NC2018_raw.csv", stringsAsFactors = TRUE)
+  O3_2019 <- read.csv("../Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = TRUE)
+  PM25_2018 <- read.csv("../Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = TRUE)
+  PM25_2019 <- read.csv("../Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
 
 #2
+  #2018 Ozone:
+  dim(O3_2018)
+  colnames(O3_2018)
+  str(O3_2018)
+  
+  #2019 Ozone:
+  dim(O3_2019)
+  colnames(O3_2019)
+  str(O3_2019)
+  
+  #2018 Particulate Matter:
+  dim(PM25_2018)
+  colnames(PM25_2018)
+  str(PM25_2018)
+  
+  #2019 Particulate Matter:
+  dim(PM25_2019)
+  colnames(PM25_2019)
+  str(PM25_2019)  
+  
 ```
 
 ## Wrangle individual datasets to create processed files.
@@ -36,13 +70,26 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
 ```{r}
-#3
-
-#4
-
-#5
+#3 & 4 & 5
+  O3_2018_proc <- O3_2018 %>% mutate(Date = as.Date(Date, format = "%m/%d/%Y")) %>% 
+                              select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+  
+  O3_2019_proc <- O3_2019 %>% mutate(Date = as.Date(Date, format = "%m/%d/%Y")) %>% 
+                              select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+  
+  PM25_2018_proc <- PM25_2018 %>% mutate(Date = as.Date(Date, format = "%m/%d/%Y")) %>% 
+                                  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>% 
+                                  mutate(AQS_PARAMETER_DESC = "PM2.5")
+  
+  PM25_2019_proc <- PM25_2019 %>% mutate(Date = as.Date(Date, format = "%m/%d/%Y")) %>% 
+                                  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>% 
+                                  mutate(AQS_PARAMETER_DESC = "PM2.5")
 
 #6
+write.csv(O3_2018_proc, "../Data/Processed/EPAair_O3_NC2018_processed.csv", row.names = FALSE)
+write.csv(O3_2019_proc, "../Data/Processed/EPAair_O3_NC2019_processed.csv", row.names = FALSE)
+write.csv(PM25_2018_proc, "../Data/Processed/EPAair_PM25_NC2018_processed.csv", row.names = FALSE)
+write.csv(PM25_2019_proc, "../Data/Processed/EPAair_PM25_NC2019_processed.csv", row.names = FALSE)
 
 ```
 
@@ -62,14 +109,32 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 ```{r}
 #7
+  # Check column name congruence
+  mean(mean(colnames(O3_2018_proc) == colnames(O3_2019_proc)), mean(colnames(PM25_2018_proc) == colnames(PM25_2019_proc)), mean(colnames(O3_2018_proc) == colnames(PM25_2018_proc))) # equals one, so all true, so all match
+
+  # Bind together
+  EPA_air_init <- rbind(O3_2018_proc, O3_2019_proc, PM25_2018_proc, PM25_2019_proc)
 
 #8
+  EPA_air <- EPA_air_init %>% filter(Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue", "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", "West Johnston Co.", "Garinger High School", "Castle Hayne", "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
+    group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>% 
+    summarise(AQI_DailyMean_Value = mean(DAILY_AQI_VALUE), 
+              Latitude = mean(SITE_LATITUDE), 
+              Longitude = mean(SITE_LONGITUDE), .groups = "drop") %>%
+    mutate(Month = month(Date), 
+           Year = year(Date))
+  
+  dim(EPA_air) 
 
 #9
+  EPA_air_tidy <- EPA_air %>% pivot_wider(names_from = AQS_PARAMETER_DESC, values_from = AQI_DailyMean_Value)
 
 #10
+  dim(EPA_air_tidy)
 
 #11
+  write.csv(EPA_air_tidy, "../Data/Processed/EPAair_O3_PM25_NC2122_Processed.csv", row.names = FALSE) #shouldn't the file name be NC1819? Keeping it consistent to follow instructions (promise I'm not being snarky just wondering)
+
 
 ```
 
@@ -84,12 +149,16 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 ```{r}
 #12(a,b)
+AQ_monthly_summary <- EPA_air_tidy %>% group_by(Site.Name, Month, Year) %>% 
+                                       summarise(Ozone_MonthlyMean = mean(Ozone), PM2.5_MonthlyMean = mean(PM2.5), .groups = "drop") %>% 
+                                       filter(is.na(Ozone_MonthlyMean) + is.na(PM2.5_MonthlyMean) != 2) %>% #keeps only rows for which both are not NA (bool math)
+                                       arrange(Year, Month, Site.Name) #so they're not interspersed
 
 
 #13
-
+dim(AQ_monthly_summary)
 ```
 
 14. Why did we use the function `drop_na` rather than `na.omit`?
 
-> Answer: 
+> Answer: Oh. I used boolean logic on 'is.na'. But drop_na in place of na.omit would make sense because it allows for missing values to be sought in multiple columns, allowing multiple columns to be specified and only dropping 'NA' values when they are present in all of the specified columns, whereas na.omit remoces all incomplete cases (ie. any row in which any column is NA). 
