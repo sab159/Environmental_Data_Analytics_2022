@@ -15,6 +15,12 @@ editor_options:
 4. Perform simple data visualizations in the R package `ggplot`
 
 ## Expression function and Saving plots
+```{r}
+library(tidyverse)
+library(cowplot)
+library(wesanderson)
+```
+
 
 The expression function can be used when you want to add mathematical symbols and subscripts mixed with regular letter to labels. 
 
@@ -59,6 +65,13 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # Plot surface temperatures by day of  year. 
 # Color your points by year, and facet by lake in two rows.
 # Change the ylab name
+PP_surf <- PeterPaul.chem.nutrients %>% filter(depth == 0)
+
+ggplot(PP_surf, aes(x = sampledate, y = temperature_C, color = year4)) +
+       geom_point() +
+       facet_wrap('lakename', nrow = 2) +
+       ylab("Temperature (C)") 
+
 
 
 #2. 
@@ -67,6 +80,10 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # Change the color palette to magma and play with direction (+- 1), which one makes more sense?
 # Change x axis to include marker/labels every 5 years
 
+ggplot(PeterPaul.chem.nutrients, aes(x = sampledate, y = temperature_C, color = depth)) +
+      geom_point(size = 0.5) +
+      scale_color_viridis(option = "magma", direction = -1) + #negative one makes deeper darker, which makes sense. 
+      scale_x_date(date_breaks = "5 years", date_labels = '%Y')
 
 
 
