@@ -52,8 +52,10 @@ the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_
   class(PPLakesData$sampledate); class(NRLitterData$collectDate)
   
   #they're not, so fix them
-  PPLakesData <- PPLakesData %>% mutate(sampledate = as.Date(sampledate, format = "%Y-%m-%d"))
-  NRLitterData <- NRLitterData %>% mutate(collectDate = as.Date(collectDate, format = "%Y-%m-%d"))
+  PPLakesData <- PPLakesData %>% mutate(sampledate = as.Date(sampledate, 
+                                                             format = "%Y-%m-%d"))
+  NRLitterData <- NRLitterData %>% mutate(collectDate = as.Date(collectDate, 
+                                                                format = "%Y-%m-%d"))
 
 ```
 ## Define your theme
@@ -85,7 +87,8 @@ Lakes_P_plot <- ggplot(data = PPLakesData, aes(x = tp_ug, y = po4, color = laken
                        geom_point(alpha = 0.5) +
                        geom_smooth(method = "lm", color = "black", size = .7) +
                        ylim(0, 50) + 
-                       labs(x = "Total Phosphorus (ug/L)", y = "Phosphate (ug/L)", color = "Lake Name") +
+                       labs(x = "Total Phosphorus (ug/L)", y = "Phosphate (ug/L)", 
+                            color = "Lake Name") +
                        scale_color_manual(values = wes_palettes$Cavalcanti1) 
        
 Lakes_P_plot
@@ -96,25 +99,32 @@ Lakes_P_plot
 
 ```{r}
 #5
-Lakes_temp_plot <- ggplot(data = PPLakesData, aes(x = as.factor(month), y = temperature_C, color = lakename)) +
+Lakes_temp_plot <- ggplot(data = PPLakesData, aes(x = as.factor(month), 
+                                                  y = temperature_C, 
+                                                  color = lakename)) +
                           geom_boxplot(alpha = 0.7) +
                           labs(x = "", y = "Temp(C)", color = "Lake Name") + #keep the yaxis name short so it fits
                           scale_color_manual(values = wes_palettes$Cavalcanti1) + 
                           theme(legend.position = "none")
     
 
-Lakes_TP_plot <- ggplot(data = PPLakesData, aes(x = as.factor(month), y = tp_ug, color = lakename)) +
+Lakes_TP_plot <- ggplot(data = PPLakesData, aes(x = as.factor(month), 
+                                                y = tp_ug, 
+                                                color = lakename)) +
                           geom_boxplot(alpha = 0.7) +
                           labs(x = "", y = "TP (ug/L)", color = "Lake Name") + #keep the yaxis name short so it fits
                           scale_color_manual(values = wes_palettes$Cavalcanti1) + 
                           theme(legend.position = "none")
 
-Lakes_TN_plot <- ggplot(data = PPLakesData, aes(x = as.factor(month), y = tn_ug, color = lakename)) +
+Lakes_TN_plot <- ggplot(data = PPLakesData, aes(x = as.factor(month), 
+                                                y = tn_ug, 
+                                                color = lakename)) +
                           geom_boxplot(alpha = 0.7) +
                           labs(x = "Month", y = "TN (ug/L)", color = "Lake Name") + #keep the yaxis name short 
                           scale_color_manual(values = wes_palettes$Cavalcanti1)
 
-plot_grid(Lakes_temp_plot, Lakes_TP_plot, Lakes_TN_plot, nrow = 3, align = 'v', rel_heights = c(1, 1, 1.45))
+plot_grid(Lakes_temp_plot, Lakes_TP_plot, Lakes_TN_plot, nrow = 3, align = 'v', 
+          rel_heights = c(1, 1, 1.45))
 
 ```
 
@@ -143,7 +153,7 @@ NeedleLitter_facet_plot <- ggplot(data = subset(NRLitterData, functionalGroup ==
                                   aes(x = collectDate, y = dryMass)) +
                                   geom_point(alpha = 0.85) +
                                   labs(x = "Date", y = "Dry Mass (g)") +
-                                  facet_wrap(facets = "nlcdClass", nrow = 3) + 
+                                  facet_wrap(facets = "nlcdClass", nrow = 3) 
   
 NeedleLitter_facet_plot
 
