@@ -226,7 +226,7 @@ wind_data_ts <- ts(wind_data_clean$AWND.clean,
                    frequency=12) 
 
 #decompose
-wind_data_decomp <- stl(wind_data_ts,s.window = "periodic")
+wind_data_decomp <- stl(wind_data_ts, s.window = "periodic")
 plot(wind_data_decomp)
 
 # Run SMK test
