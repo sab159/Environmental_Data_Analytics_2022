@@ -117,19 +117,24 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
+huc8_sf <- st_read("./Data/Spatial/NCHUC8.shp")
 
 
 #Reveal the columns
-
+names(huc8_sf)
 
 #Check the CRS
-
+st_crs(huc8_sf)
 
 #Examine some records
-
+head(huc8_sf)
 
 #View the data as a map, colored by the acreage in each
+mapview::mapview(huc8_sf, zcol = "ACRES")
 
+ggplot(data = huc8_sf) +
+  geom_sf(aes(fill = ACRES)) +
+  scale_fill_continuous(type='viridis')
 
 ```
 
@@ -139,11 +144,17 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r Select the Upper Neuse HUC 8}
 #Read the shapefile into an sf dataframe
-
-
+UpperNeuse_sf <- st_read("./Data/Spatial/NCHUC8.shp") %>% 
+                 filter(SUBBASIN == "Upper Neuse") 
 
 #Create a map
+mapview(huc8_sf, color = "purple", col.regions = "purple") + 
+      mapview(UpperNeuse_sf, color = "orange", col.regions = "orange", alpha = 1, alpha.regions = 1) 
 
+ggplot() + 
+  geom_sf(data = huc8_sf, fill = "orange") +
+  geom_sf(data = UpperNeuse_sf, fill = "purple")
+  
 
 ```
 
@@ -239,17 +250,27 @@ ggplot() +
 
 ```{r}
 #Compute HUC8 wind energy
+HUC12_EnviroAtlas.data <- read.csv("https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv",
+                                   colClasses = c("HUC_12" = "factor"))
 
+head(HUC12_EnviroAtlas.sf)
 
+EnviroAtlas.data <- HUC12_EnviroAtlas.data %>% 
+                    mutate(HUC_8 = substr(HUC_12, 1, 8)) %>% 
+                    group_by(HUC_8) %>% 
+                    summarise(TotAvgWindEnergy = sum(AvgWindEnergy),
+                              TotkWhkm2day = sum(kWhkm2day))
 
 
 #Join to HUC_8 features
-
-
-
+HUC8_WindEn.sf <- merge(EnviroAtlas.data, huc8_sf, by = "HUC_8") %>% 
+                  st_as_sf(crs = st_crs(huc8_sf)) #Why did sf-ness get dropped? 
 
 #View the outputs
+mapview::mapview(HUC8_WindEn.sf, zcol = "TotAvgWindEnergy")
 
+ggplot(HUC8_WindEn.sf, aes(fill = TotAvgWindEnergy)) + 
+  geom_sf()
 
 
 ```
